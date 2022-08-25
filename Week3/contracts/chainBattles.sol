@@ -37,7 +37,7 @@ contract ChainBattle is ERC721URIStorage {
             "<style>.base { fill: white; font-family: serif; font-size: 14px; }</style>",
             '<rect width="100%" height="100%" fill="black" />',
             '<text x="50%" y="30%" class="base" dominant-baseline="middle" text-anchor="middle">',
-            "Niluk",
+            "RektNoob Warrior",
             "</text>",
             '<text x="50%" y="40%" class="base" dominant-baseline="middle" text-anchor="middle">',
             "Levels: ",
@@ -46,13 +46,14 @@ contract ChainBattle is ERC721URIStorage {
             '<text x="50%" y="50%" class="base" dominant-baseline="middle" text-anchor="middle">',
             "Speed: ",
             getSpeed(tokenId),
+            " ms-1",
             "</text>",
             '<text x="50%" y="60%" class="base" dominant-baseline="middle" text-anchor="middle">',
             "Strength: ",
             getStrength(tokenId),
             "</text>",
             '<text x="50%" y="70%" class="base" dominant-baseline="middle" text-anchor="middle">',
-            "Life: ",
+            "Skill: ",
             getlife(tokenId),
             "</text>",
             "</svg>"
@@ -107,15 +108,44 @@ contract ChainBattle is ERC721URIStorage {
             );
     }
 
+    //-------------------------------------------------------------------------------
+    function getRandomNum1(uint256 _seed) public view returns (uint256) {
+        uint256 randomnum = (uint256(
+            keccak256(abi.encodePacked(block.timestamp, msg.sender, _seed))
+        ) % 20) + 1;
+
+        return randomnum;
+    }
+
+    function getrandomlife() public view returns (string memory) {
+        string memory randomnum = life[
+            (uint256(
+                keccak256(abi.encodePacked(block.timestamp, block.difficulty))
+            ) % 5) + 1
+        ];
+
+        return randomnum;
+    }
+
+    function getRandomNum() public view returns (uint256) {
+        uint256 randomnum = (uint256(
+            keccak256(
+                abi.encodePacked(block.timestamp, msg.sender, block.difficulty)
+            )
+        ) % 10) + 1;
+
+        return randomnum + getRandomNum1(1);
+    }
+
     function mint() public {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _safeMint(msg.sender, newItemId);
         NFTfeatures storage abilities = tokenIdtoAbilities[newItemId];
-        abilities.levels = 0;
-        abilities.speed = 0;
-        abilities.strength = 0;
-        abilities.life = "Nothing Yet";
+        abilities.levels = getRandomNum();
+        abilities.speed = getRandomNum1(5) * 8;
+        abilities.strength = getRandomNum() + getRandomNum1(10);
+        abilities.life = getrandomlife();
         _setTokenURI(newItemId, getTokenURI(newItemId));
     }
 
@@ -127,10 +157,10 @@ contract ChainBattle is ERC721URIStorage {
         );
         NFTfeatures storage abilities = tokenIdtoAbilities[tokenId];
         abilities.levels = abilities.levels + 1;
-        abilities.speed = abilities.speed + 5;
+        abilities.speed = abilities.speed + 1;
         abilities.strength = abilities.strength + 10;
         lifeCounter += 1;
-        abilities.life = life[lifeCounter];
+        abilities.life = getrandomlife();
         _setTokenURI(tokenId, getTokenURI(tokenId));
     }
 }
