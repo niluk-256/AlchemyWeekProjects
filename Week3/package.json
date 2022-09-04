@@ -13,7 +13,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.7.3",
     "dotenv": "^16.0.1",
-    "hardhat": "^2.10.2"
+    "hardhat": "^2.11.0"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
